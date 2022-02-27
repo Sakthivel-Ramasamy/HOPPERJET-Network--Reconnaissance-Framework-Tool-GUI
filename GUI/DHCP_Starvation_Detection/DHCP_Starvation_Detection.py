@@ -40,7 +40,8 @@ def dhcp_starvation_identifier(packet):
     global dhcpcount, dhcpdict, dhcp_starvation_detection_timeout, dhcp_starvation_detection_threshold, dhcp_starvation_detection_scanner_global_start_time, dhcp_starvation_detection_scanner_start_time
     newtime = (str(gettime()).split(" ")[1])
     newmac = packet.src
-    if DHCP in packet and packet[DHCP].options[0][1] == 1:  #Filter to process DHCP DISCOVER Packet only
+    #Filter to process DHCP DISCOVER Packet only
+    if DHCP in packet and packet[DHCP].options[0][1] == 1:
         dhcpcount += 1
         for time, mac in dhcpdict.items():
             if mac != newmac and dhcpcount > dhcp_starvation_detection_threshold:
