@@ -4,7 +4,7 @@ import nmap
 import os
 from scapy.all import *
 
-#Start of IP Spoofing Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -13,7 +13,11 @@ def gettime():
         current_time=datetime.now()
     return current_time
 
-# Checks if the TTL is within the maximum threshold
+#End of Get Current Time Function
+
+#Start of IP Spoofing Detection Scanner
+
+#Function to check whether the TTL value is within the maximum threshold
 def ip_spoof_ttl_checker(src, ttl):
     global ttl_values
     global ip_spoofing_detection_threshold
@@ -27,7 +31,7 @@ def ip_spoof_ttl_checker(src, ttl):
         attack_output=open(os.path.dirname(__file__)+"/../error.hop", "w")
         attack_output.close()
 
-# Parses packets received and passes source IP 
+#Function to parse packets received and to pass source IP Address
 def ip_spoof_identifier(pkt):
 	try:
 		if pkt.haslayer(IP):
@@ -37,9 +41,7 @@ def ip_spoof_identifier(pkt):
 	except:
 		pass
 
-# Sniffs traffic on the specified interface. 
-# Grabs the src IP and TTL from the network traffic then compares the TTL with an ICMP echo reply. 
-# If the difference in TTL is greater than THRESHOLD a warning will be printed.
+#Function to sniff traffic on the specified interface. 
 def ip_spoof_detector(interface):
     try:
         sniff(prn=ip_spoof_identifier, iface=interface, store=False)

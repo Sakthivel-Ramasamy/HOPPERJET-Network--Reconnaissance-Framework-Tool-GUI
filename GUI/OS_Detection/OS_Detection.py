@@ -7,7 +7,7 @@ import prettytable
 from scapy.all import *
 import sys
 
-#Start of OS Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -15,6 +15,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of OS Detection Scanner
 
 def os_detector(ip):
     os_detection_scanner_start_time=gettime()

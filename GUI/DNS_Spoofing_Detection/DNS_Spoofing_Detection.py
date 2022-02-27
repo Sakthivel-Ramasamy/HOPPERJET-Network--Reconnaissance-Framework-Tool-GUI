@@ -5,7 +5,7 @@ import nmap
 import os
 from scapy.all import *
 
-#Start of DNS Spoofing Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -13,6 +13,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of DNS Spoofing Detection Scanner
 
 def dns_spoof_ip_identifier(packet):
     ipAdds = []
@@ -27,13 +31,12 @@ def dns_spoof_identifier(packet):
         if packet[DNS].id not in dnsMap:
             dnsMap[packet[DNS].id]=packet
         else:
-            #get mac address from packet
-            # Will have to check if this is correct
+            #Get MAC Address from packet
             macAddr2 = packet[Ether].src
             firstPacket = dnsMap[packet[DNS].id]
             ipAdds = dns_spoof_ip_identifier(packet)
             ipAdds2= dns_spoof_ip_identifier(firstPacket)
-            #check if the MAC address is same. if not raise an alarm
+            #Raise an alarm if the MAC Address is not same
             if macAddr2 != firstPacket[Ether].src:
                 output=open(os.path.dirname(__file__)+"/../output.hop", "a")
                 output.write("Timestamp: {}\nMessage: Possible DNS Poisoning Attempt Detected".format(gettime()))

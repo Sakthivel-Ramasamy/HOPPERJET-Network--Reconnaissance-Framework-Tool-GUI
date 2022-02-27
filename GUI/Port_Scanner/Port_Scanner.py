@@ -7,7 +7,7 @@ import prettytable
 from scapy.all import *
 import sys
 
-#Start of Port Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -15,6 +15,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of Port Scanner
 
 def tcp_connect_scan(dst_ip,dst_port,dst_timeout):
     src_port = RandShort()
@@ -338,19 +342,6 @@ if __name__=="__main__":
     timeout=int(json_data["Time_Out"])
     verbose=int(json_data["Verbose"])
     
-    # try:
-    #     port=input("\nEnter the Port(s) to Scan: ")
-    # except ValueError:
-    #     print("\nNo Ports Entered...")
-    #     sys.exit()
-    # try:
-    #     timeout=int(input("\nEnter the Timeout Duration (Default: 2): "))
-    # except ValueError:
-    #     timeout=2
-    # try:
-    #     verbose=int(input("\nEnter the Level of Verbosity [From 0 (almost mute) to 3 (verbose)] (Default: 0): "))
-    # except ValueError:
-    #     verbose=0
     conf.verb=verbose
     port_list=[]
     if "," in port:
@@ -373,7 +364,6 @@ if __name__=="__main__":
     port_list = temp_ports
     port_list.sort()
     
-    # all_methods_port_scanner(ip, port_list, timeout)
     if feature=="Port Scanner":
         if drop_down=="TCP Connect Scan":
             tcp_connect_scan_port_scanner(scan_ip, port_list, timeout)

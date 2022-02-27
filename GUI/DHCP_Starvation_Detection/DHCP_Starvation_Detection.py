@@ -5,7 +5,7 @@ import os
 from scapy.all import *
 import sys
 
-#Start of DHCP Starvation Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -14,6 +14,10 @@ def gettime():
         current_time=datetime.now()
     return current_time
 
+#End of Get Current Time Function
+
+#Start of DHCP Starvation Detection Scanner
+
 def dhcp_starvation_time_checker(time, newtime):
     global dhcp_starvation_detection_timeout
     hour1 = time.split(":")[0]
@@ -21,8 +25,7 @@ def dhcp_starvation_time_checker(time, newtime):
     min1 = time.split(":")[1]
     min2 = newtime.split(":")[1]
 
-    # If the time is the same I don't need to check the milliseconds
-    # If the hour is the same but not the minutes and there are in range of 10 mins send the frame
+    #Don't check the milliseconds if the time same and send the frame if the hour is the same but not the minutes and there are in range of 10 minutes
     if (time == newtime) or ((hour1 == hour2) and (int(min2) - int(min1) in range(dhcp_starvation_detection_timeout))):
         output=open(os.path.dirname(__file__)+"/../output.hop", "a")
         output.write("\n\nDHCP Count = {}\nTimestamp: {}\nMessage: Possible DHCP Starvation Attack Detected".format(dhcpcount, gettime()))
@@ -37,14 +40,13 @@ def dhcp_starvation_identifier(packet):
     global dhcpcount, dhcpdict, dhcp_starvation_detection_timeout, dhcp_starvation_detection_threshold, dhcp_starvation_detection_scanner_global_start_time, dhcp_starvation_detection_scanner_start_time
     newtime = (str(gettime()).split(" ")[1])
     newmac = packet.src
-    if DHCP in packet and packet[DHCP].options[0][1] == 1:  # DHCP DISCOVER PACKET
+    if DHCP in packet and packet[DHCP].options[0][1] == 1:  #Filter to process DHCP DISCOVER Packet only
         dhcpcount += 1
         for time, mac in dhcpdict.items():
             if mac != newmac and dhcpcount > dhcp_starvation_detection_threshold:
                 val = dhcp_starvation_time_checker(time, newtime)
                 if val == 1:
                     dhcpcount=0
-                    #dhcp_starvation_detection_scanner_start_time=gettime()
                     dhcp_starvation_detection_scanner_global_stop_time=gettime()
                     output=open(os.path.dirname(__file__)+"/../output.hop", "a")
                     output.write("\n\nDHCP Starvation Detection Scanner ended at {}".format(dhcp_starvation_detection_scanner_global_stop_time))

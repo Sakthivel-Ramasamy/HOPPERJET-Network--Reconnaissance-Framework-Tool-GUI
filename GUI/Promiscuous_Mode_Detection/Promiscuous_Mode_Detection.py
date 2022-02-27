@@ -7,7 +7,7 @@ import prettytable
 from scapy.all import *
 import sys
 
-#Start of Promiscuous Mode Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -15,6 +15,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of Promiscuous Mode Detection Scanner
 
 def promiscuous_response_identifier(ip):
     a=Ether(dst="FF:FF:FF:FF:FF:FE")/ARP(pdst=ip)
@@ -31,13 +35,11 @@ def promiscuous_device_scanner_using_ip_address(ip):
     try:
         result=promiscuous_response_identifier(ip)
         countpromiscuoushost+=1
-        #print(colored("The ip {}".format(ip) + " is in promiscuous mode", "white", "on_red", attrs=['bold']))
         status="Promiscuous Mode Suspected"
         attack_output=open(os.path.dirname(__file__)+"/../error.hop", "w")
         attack_output.close()
     except:
         countnotpromiscuoushost+=1
-        #print(colored("The ip {}".format(ip) + " is not in promiscuous mode", "white", "on_green", attrs=['bold']))
         status="No Promiscuous Mode Suspected"
     promiscuous_mode_detection_using_ip_address_output_table.add_row([counthost, ip, macaddress, status])
     promiscuous_device_scanner_using_ip_address_stop_time=gettime()
@@ -55,7 +57,6 @@ def promiscuous_devices_scanner_using_nmap(network):
     nm=nmap.PortScanner()
     nm.scan(hosts=network, arguments='-sn')
     host_list=list(nm.all_hosts())
-    #host_list=sorted(ipaddress.ip_address(ipaddr) for ipaddr in host_list)
     host_list=sorted(host_list, key=ipaddress.IPv4Address)
     counthost=0
     countpromiscuoushost=0
@@ -73,11 +74,9 @@ def promiscuous_devices_scanner_using_nmap(network):
         try:
             result=promiscuous_response_identifier(ip)
             countpromiscuoushost+=1
-            #print(colored("The ip {}".format(ip) + " is in promiscuous mode", "white", "on_red", attrs=['bold']))
             status="Promiscuous Mode Suspected"
         except:
             countnotpromiscuoushost+=1
-            #print(colored("The ip {}".format(ip) + " is not in promiscuous mode", "white", "on_green", attrs=['bold']))
             status="No Promiscuous Mode Suspected"
         promiscuous_mode_detection_using_nmap_output_table.add_row([counthost, ip, macaddress, status])
     promiscuous_devices_scanner_using_nmap_stop_time=gettime()
@@ -106,15 +105,12 @@ def promiscuous_devices_scanner_using_scapy(network):
         counthost+=1
         ip=element[1].psrc
         macaddress=element[1].hwsrc
-        #print("\nIP Address: {} MAC Address: {}".format(element[1].psrc, element[1].hwsrc))
         try:
             result=promiscuous_response_identifier(ip)
             countpromiscuoushost+=1
-            #print(colored("The ip {}".format(ip) + " is in promiscuous mode", "white", "on_red", attrs=['bold']))
             status="Promiscuous Mode Suspected"
         except:
             countnotpromiscuoushost+=1
-            #print(colored("The ip {}".format(ip) + " is not in promiscuous mode", "white", "on_green", attrs=['bold']))
             status="No Promiscuous Mode Suspected"
         promiscuous_mode_detection_using_scapy_output_table.add_row([counthost, ip, macaddress, status])
     promiscuous_devices_scanner_using_scapy_stop_time=gettime()

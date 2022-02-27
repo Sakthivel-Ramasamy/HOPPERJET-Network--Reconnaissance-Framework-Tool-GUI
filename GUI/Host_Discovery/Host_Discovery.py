@@ -7,7 +7,7 @@ import prettytable
 from scapy.all import *
 import sys
 
-#Start of Host Discovery Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -15,6 +15,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of Host Discovery Scanner
 
 def host_discovery_scanner_using_nmap(network):
     counthost=0

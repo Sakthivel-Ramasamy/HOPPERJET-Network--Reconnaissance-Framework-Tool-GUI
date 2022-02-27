@@ -5,7 +5,7 @@ import os
 from scapy.all import *
 import sys
 
-#Start of ARP Spoofing Detection Scanner
+#Start of Get Current Time Function
 
 def gettime():
     try:
@@ -13,6 +13,10 @@ def gettime():
     except Exception:
         current_time=datetime.now()
     return current_time
+
+#End of Get Current Time Function
+
+#Start of ARP Spoofing Detection Scanner
 
 def arp_spoof_safe():
     arp_spoofing_detection_scanner_stop_time=gettime()
@@ -38,27 +42,24 @@ def arp_spoof_not_safe(a):
     attack_output.close()
     exit_process()
 
-#function getting mac addrees by broadcasting the ARP msg packets 
+#Function to get MAC Addrees by broadcasting the ARP message packets 
 def arp_spoof_mac_identifier(ip):
     p = Ether(dst="FF:FF:FF:FF:FF:FF")/ARP(pdst=ip) 
     result = srp(p, timeout=3, verbose=False)[0] 
     return result[0][1].hwsrc
 
-#process for every packet received by sniff function 
+#Function to process every packet received by sniff function 
 def arp_spoof_identifier(packet):
     global arpcount, arp_spoofing_detection_scanner_start_time
     if packet.haslayer(ARP) and packet[ARP].op == 2: 
         a=[]	 
         try: 
-            # get the real MAC address of the sender 
-            real_mac = arp_spoof_mac_identifier(packet[ARP].psrc) 
-            #print(real_mac) 
-            # get the MAC address from the packet sent to us 
-            response_mac = packet[ARP].hwsrc 
-            #print(response_mac) 
-            # if they're different, definetely there is an attack 
+            #Get the sender's real MAC Address 
+            real_mac = arp_spoof_mac_identifier(packet[ARP].psrc)
+            #Get the MAC Address from the packet sent to us 
+            response_mac = packet[ARP].hwsrc
+            #If both MAC Addresses are different, attack took place
             if real_mac != response_mac: 
-                #print(f"[!] You are under attack, REAL-MAC: {real_mac.upper()}, FAKE-MAC: {response_mac.upper()}") 
                 a.append(real_mac) 
                 a.append(response_mac)  
                 return arp_spoof_not_safe(a) 
@@ -68,8 +69,7 @@ def arp_spoof_identifier(packet):
                 arpcount=0
                 return arp_spoof_safe() 
         except IndexError:            	 
-            # unable to find the real mac 
-            # may be a fake IP or firewall is blocking packets 
+            #Error in finding the real MAC Address
             pass
 
 def arp_spoof_detector(interface):
