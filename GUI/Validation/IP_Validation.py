@@ -3,6 +3,8 @@ import json
 import os
 import sys
 
+#Check whether the input IP Address is valid or not
+
 try:
     file=open(os.path.dirname(__file__)+"/../input.json", "r")
     json_data=json.load(file)

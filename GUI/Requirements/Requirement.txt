@@ -1,7 +1,9 @@
 argparse
 datetime
 ipaddress
+json
+os
 python-nmap
 prettytable
 scapy
-termcolor
+sys
